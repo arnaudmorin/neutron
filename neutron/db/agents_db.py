@@ -110,12 +110,10 @@ class AgentAvailabilityZoneMixin(az_ext.AvailabilityZonePluginBase):
         for agent in agents:
             if not agent.availability_zone:
                 continue
-            if agent.agent_type == constants.AGENT_TYPE_DHCP:
-                resource = 'network'
-            elif agent.agent_type == constants.AGENT_TYPE_L3:
+            if agent.agent_type == constants.AGENT_TYPE_L3:
                 resource = 'router'
             else:
-                continue
+                resource = 'network'
             key = (agent.availability_zone, resource)
             value = agent.admin_state_up or result.get(key, False)
             result[key] = 'available' if value else 'unavailable'
@@ -164,13 +162,16 @@ class AgentAvailabilityZoneMixin(az_ext.AvailabilityZonePluginBase):
         if not availability_zones:
             return
         if resource_type == 'network':
-            agent_type = constants.AGENT_TYPE_DHCP
+            agent_types = [constants.AGENT_TYPE_DHCP,
+                           constants.AGENT_TYPE_OVS]
         elif resource_type == 'router':
-            agent_type = constants.AGENT_TYPE_L3
+            agent_types = [constants.AGENT_TYPE_L3]
         else:
             return
-        azs = get_availability_zones_by_agent_type(
-            context, agent_type, availability_zones)
+        azs = []
+        for agent_type in agent_types:
+            azs += get_availability_zones_by_agent_type(
+                context, agent_type, availability_zones)
         diff = set(availability_zones) - set(azs)
         if diff:
             raise az_exc.AvailabilityZoneNotFound(availability_zone=diff.pop())
