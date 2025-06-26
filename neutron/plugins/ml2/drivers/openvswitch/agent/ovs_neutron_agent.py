@@ -364,6 +364,7 @@ class OVSNeutronAgent(l2population_rpc.L2populationRpcCallBackTunnelMixin,
         self.agent_state = {
             'binary': n_const.AGENT_PROCESS_OVS,
             'host': self.host,
+            'availability_zone': self.conf.AGENT.availability_zone,
             'topic': n_const.L2_AGENT_TOPIC,
             'configurations': {'bridge_mappings': self.bridge_mappings,
                                n_const.RP_BANDWIDTHS: self.rp_bandwidths,

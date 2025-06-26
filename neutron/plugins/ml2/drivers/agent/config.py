@@ -21,3 +21,4 @@ from neutron.conf.plugins.ml2.drivers import agent
 
 agent.register_agent_opts()
 config.register_agent_state_opts_helper(cfg.CONF)
+config.register_availability_zone_opts_helper(cfg.CONF)
